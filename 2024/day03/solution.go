@@ -18,16 +18,15 @@ func input() []string {
 }
 
 func sumMul(line string) (sum int) {
-	regex := regexp.MustCompile(`mul\(\d{1,3},\d{1,3}\)`)
-	matches := regex.FindAllString(line, -1)
+	regex := regexp.MustCompile(`mul\((\d{1,3}),(\d{1,3})\)`)
+	matches := regex.FindAllStringSubmatch(line, -1)
+	Println(matches)
 	for _, match := range matches {
-		reNum := regexp.MustCompile(`\d{1,3}`)
-		numbers := reNum.FindAllString(match, -1)
-		n1, _ := strconv.Atoi(numbers[0])
-		n2, _ := strconv.Atoi(numbers[1])
+		n1, _ := strconv.Atoi(match[1])
+		n2, _ := strconv.Atoi(match[2])
 		sum += n1 * n2
 	}
-	return 
+	return
 }
 
 func part2(input []string) int {
