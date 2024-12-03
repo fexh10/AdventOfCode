@@ -3,11 +3,10 @@ package main
 import (
 	"bufio"
 	. "fmt"
-	"math"
 	"os"
 	"strconv"
 	"strings"
-	"unicode"
+	"math"
 )
 
 func input() []string {
@@ -24,87 +23,71 @@ func input() []string {
 	return lines
 }
 
-func parseInput(lines []string, part1 bool) {
-	var sum, tot int
-	var copie []int 
+func parseInput(line string, i int) (numbers, victoryNumbers []int){
+	temp := "Card " + strconv.Itoa(i + 1) + ": "
+	line = strings.ReplaceAll(line, temp, "")
+	allNumbers := strings.Split(line, " | ")
+	slice := strings.Split(allNumbers[0], " ")
 
-	for i, line := range lines {	
-
-		line = strings.ReplaceAll(line, "Card", "")
-		line = strings.Replace(line, strconv.Itoa(i + 1), "", 1)
-		line = strings.ReplaceAll(line, ":", "")
-		line += " "
-		numeri := strings.Split(line, "|")
-
-		var vincenti, my_numbers []int
-		var n string
-		
-		for _, char := range numeri[0] {
-			if unicode.IsDigit(char) {
-				n += string(char)
-			} else {								
-				temp, _ := strconv.Atoi(n)
-				if temp != 0 {
-					vincenti = append(vincenti, temp)
-				}
-				
-				
-				n = ""
-			}
+	for _, number := range slice {
+		n, err := strconv.Atoi(number)
+		if err == nil {
+			numbers = append(numbers, n)
 		}
-
-		for _, char := range numeri[1] {
-			if unicode.IsDigit(char) {
-				n += string(char)
-			} else {								
-				temp, _ := strconv.Atoi(n)
-				if temp != 0 {
-					my_numbers = append(my_numbers, temp)
-				}
-				n = ""
-			}
-		}
-
-		var cont int
-		
-		for _, n := range my_numbers {
-			for _, vinc := range vincenti {
-				if n == vinc {
-					cont += 1
-				}
-			}
-		}
-		if part1 {
-			sum += int(math.Pow(2, float64(cont) - 1))
-		} else {
-				if i > 1 {
-					for j := 1; j <= cont; j++ {
-						copie = append(copie, i + j)
-					}
-				}
-				
-			}
-			
-			
-		
 	}
-	if part1 {
-		Println(sum)
-	} else {
-		Println(tot)
+
+	slice = strings.Split(allNumbers[1], " ")
+	for _, number := range slice {
+		n, err := strconv.Atoi(number)
+		if err == nil {
+			victoryNumbers = append(victoryNumbers, n)
+		}
 	}
+	return
 }
 
-func parte2(lines []string) {
-	parseInput(lines, false)
+func winningNumbers(numbers, victoryNumbers []int) (winningNumbers int) {
+	for _, number := range numbers {
+		for _, victoryNumber := range victoryNumbers {
+			if number == victoryNumber {
+				winningNumbers += 1
+			}
+		}
+	}
+	return
 }
 
-func parte1(lines []string) {
-	parseInput(lines, true)
+func processCard(lines []string, i int) int {
+	if i >= len(lines) {
+		return 0
+	}
+	numbers, victoryNumbers := parseInput(lines[i], i)
+	winningNumbers := winningNumbers(numbers, victoryNumbers)
+	total := 1
+	for j := 0; j < winningNumbers; j++ {
+		total += processCard(lines, i + 1 + j)
+	}
+	return total
+}
+
+func part2(lines []string) (totalScratchcards int) {
+	for i := range lines {
+		totalScratchcards += processCard(lines, i)
+	}
+	return
+}
+
+func part1(lines []string) (sum int) {
+	for i, line := range lines {
+		numbers, victoryNumbers := parseInput(line, i)
+		winningNumbers := winningNumbers(numbers, victoryNumbers)
+		sum += int(math.Pow(2, float64(winningNumbers) - 1))
+	}
+	return
 }
 
 func main() {
 	var lines[]string = input()
-	parte1(lines)
-	parte2(lines)
+	Println(part1(lines))
+	Println(part2(lines))
 }
