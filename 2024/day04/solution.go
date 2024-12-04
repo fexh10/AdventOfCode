@@ -54,14 +54,11 @@ func findWors(lines []string, i, j int) (sum int) {
 func part2(lines []string) (sum int) {
 	for i := 0; i < len(lines); i++ {
 		for j := 0; j < len(lines[i]); j++ {
-			var word string
 			if (i + 2 < len(lines) && j < len(lines[i]) - 2) {
-				word = string(lines[i][j]) + string(lines[i + 1][j + 1]) + string(lines[i + 2][j + 2])
-				if word == "MAS" || word == "SAM" {
-					word = string(lines[i][j + 2]) + string(lines[i + 1][j + 1]) + string(lines[i + 2][j])
-					if word == "MAS" || word == "SAM" {
-						sum += 1
-					}
+				word1 := string(lines[i][j]) + string(lines[i + 1][j + 1]) + string(lines[i + 2][j + 2])
+				word2 := string(lines[i][j + 2]) + string(lines[i + 1][j + 1]) + string(lines[i + 2][j])
+				if  (word1 == "MAS" || word1 == "SAM") && (word2 == "MAS" || word2 == "SAM") {
+					sum +=1
 				}
 			}
 		}
