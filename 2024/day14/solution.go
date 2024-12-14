@@ -52,10 +52,14 @@ func getWrappedPos(x, y, vx, vy, time int) pos {
 
 func findTree(positions map[pos]bool) bool {
 	for k := range positions {
-		// check if there is a square of 3x3 with the current position as the center
-		if positions[pos{k.x - 1, k.y - 1}] && positions[pos{k.x, k.y - 1}] && positions[pos{k.x + 1, k.y - 1}] &&
-			positions[pos{k.x - 1, k.y}] && positions[pos{k.x, k.y}] && positions[pos{k.x + 1, k.y}] &&
-			positions[pos{k.x - 1, k.y + 1}] && positions[pos{k.x, k.y + 1}] && positions[pos{k.x + 1, k.y + 1}] {
+		found := true
+		for i := 1; i <= 4; i++ {
+			if !positions[pos{k.x + i, k.y - i}] || !positions[pos{k.x + i, k.y + i}] {
+				found = false
+				break
+			}
+		}
+		if found {
 			return true
 		}
 	}
